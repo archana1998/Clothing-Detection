@@ -3,7 +3,6 @@ import os
 import cv2
 from yolo.utils.utils import *
 from predictors.YOLOv3 import YOLOv3Predictor
-from predictors.DetectronModels import Predictor
 import glob
 from tqdm import tqdm
 import sys
@@ -15,32 +14,31 @@ torch.cuda.empty_cache()
 
 
 #YOLO PARAMS
-yolo_df2_params = {   "model_def" : "yolo/df2cfg/yolov3-df2.cfg",
-"weights_path" : "yolo/weights/yolov3-df2_15000.weights",
-"class_path":"yolo/df2cfg/df2.names",
+yolo_df2_params = {   "model_def" : "yolov3-df2.cfg",
+"weights_path" : "yolov3-df2_15000.weights",
+"class_path":"df2.names",
 "conf_thres" : 0.5,
-"nms_thres" :0.4,
+"nms_thres" :0.6,
 "img_size" : 416,
 "device" : device}
 
-yolo_modanet_params = {   "model_def" : "yolo/modanetcfg/yolov3-modanet.cfg",
+"""yolo_modanet_params = {   "model_def" : "yolo/modanetcfg/yolov3-modanet.cfg",
 "weights_path" : "yolo/weights/yolov3-modanet_last.weights",
 "class_path":"yolo/modanetcfg/modanet.names",
 "conf_thres" : 0.5,
 "nms_thres" :0.4,
 "img_size" : 416,
-"device" : device}
+"device" : device}"""
 
 
 #DATASET
-dataset = 'modanet'
+dataset = 'df2'
 
 
 if dataset == 'df2': #deepfashion2
     yolo_params = yolo_df2_params
 
-if dataset == 'modanet':
-    yolo_params = yolo_modanet_params
+
 
 
 #Classes
@@ -60,18 +58,16 @@ model = 'yolo'
 
 if model == 'yolo':
     detectron = YOLOv3Predictor(params=yolo_params)
-else:
-    detectron = Predictor(model=model,dataset= dataset, CATEGORIES = classes)
+
 
 #Faster RCNN / RetinaNet / Mask RCNN
 
 
 
 while(True):
-    path = input('img path: ')
+    path = '/home/archana/Clothing-Detection/test1.jpg'
     if not os.path.exists(path):
         print('Img does not exists..')
-        continue
     img = cv2.imread(path)
     detections = detectron.get_detections(img)
     #detections = yolo.get_detections(img)
@@ -125,4 +121,4 @@ while(True):
     cv2.imshow('Detections',img)
     img_id = path.split('/')[-1].split('.')[0]
     cv2.imwrite('output/ouput-test_{}_{}_{}.jpg'.format(img_id,model,dataset),img)
-    cv2.waitKey(0)
+    cv2.waitKey(1)
