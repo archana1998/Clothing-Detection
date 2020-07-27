@@ -14,9 +14,9 @@ torch.cuda.empty_cache()
 
 
 #YOLO PARAMS
-yolo_df2_params = {   "model_def" : "yolov3-df2.cfg",
-"weights_path" : "yolov3-df2_15000.weights",
-"class_path":"df2.names",
+yolo_df2_params = {   "model_def" : "/home/archana/weights/yolov3-df2.cfg",
+"weights_path" : "/home/archana/weights/yolov3-df2_15000.weights",
+"class_path":"/home/archana/weights/df2.names",
 "conf_thres" : 0.5,
 "nms_thres" :0.6,
 "img_size" : 416,
@@ -109,16 +109,22 @@ while(True):
                 y1_rect = y1-25
                 y1_text = y1-5
 
-                if y1_rect<0:
+
+
+                """if y1_rect<0:
                     y1_rect = y1+27
                     y1_text = y1+20
-                cv2.rectangle(img,(x1-2,y1_rect) , (x1 + int(8.5*len(text)),y1) , color,-1)
-                cv2.putText(img,text,(x1,y1_text), font, 0.5,(255,255,255),1,cv2.LINE_AA)
+                cv2.rectangle(img,(x1-2,y1_rect) , (x1 + int(8.5*len(text)),y1) , color,-1)"""
+                #cv2.putText(img,text,(x1,y1_text), font, 0.5,(255,255,255),1,cv2.LINE_AA)
                 
+                new_img=img[y1:y2,x1:x2]
+                cv2.imwrite('Crops/'+'crop_'+ '.jpg', new_img)         
+              
+
                 
 
                 
     cv2.imshow('Detections',img)
     img_id = path.split('/')[-1].split('.')[0]
-    cv2.imwrite('output/ouput-test_{}_{}_{}.jpg'.format(img_id,model,dataset),img)
+    cv2.imwrite('output/output-test_{}_{}_{}.jpg'.format(img_id,model,dataset),img)
     cv2.waitKey(1)
