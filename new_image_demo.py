@@ -6,6 +6,7 @@ from predictors.YOLOv3 import YOLOv3Predictor
 import glob
 from tqdm import tqdm
 import sys
+from helpers.ImageLoader import load_images_from_folder
 
 
 
@@ -14,9 +15,9 @@ torch.cuda.empty_cache()
 
 
 #YOLO PARAMS
-yolo_df2_params = {   "model_def" : "/home/archana/weights/yolov3-df2.cfg",
-"weights_path" : "/home/archana/weights/yolov3-df2_15000.weights",
-"class_path":"/home/archana/weights/df2.names",
+yolo_df2_params = {   "model_def" : "/media/archana/Local/Flipkart GRiD/weights/yolov3-df2.cfg",
+"weights_path" : "/media/archana/Local/Flipkart GRiD/weights/yolov3-df2_15000.weights",
+"class_path":"/media/archana/Local/Flipkart GRiD/weights/df2.names",
 "conf_thres" : 0.5,
 "nms_thres" :0.6,
 "img_size" : 416,
@@ -47,11 +48,6 @@ classes = load_classes(yolo_params["class_path"])
 #Colors
 cmap = plt.get_cmap("rainbow")
 colors = np.array([cmap(i) for i in np.linspace(0, 1, 13)])
-#np.random.shuffle(colors)
-
-
-
-#
 
 
 model = 'yolo'
@@ -65,66 +61,48 @@ if model == 'yolo':
 
 
 while(True):
-    path = '/home/archana/Clothing-Detection/test1.jpg'
-    if not os.path.exists(path):
-        print('Img does not exists..')
-    img = cv2.imread(path)
-    detections = detectron.get_detections(img)
-    #detections = yolo.get_detections(img)
-    #print(detections)
-
-    
-
-    #unique_labels = np.array(list(set([det[-1] for det in detections])))
-
-    #n_cls_preds = len(unique_labels)
-    #bbox_colors = colors[:n_cls_preds]
-
-    
-    if len(detections) != 0 :
-        detections.sort(reverse=False ,key = lambda x:x[4])
-        for x1, y1, x2, y2, cls_conf, cls_pred in detections:
+    path = '/media/archana/Local/Flipkart GRiD/Flipkart Images'
+    images = load_images_from_folder(path)
+    detections = []
+    for i in range (len(images)):
+        detections.append(detectron.get_detections(images[i]))
+      
+        if len(detections[i]) != 0 :
+            detections[i].sort(reverse=False ,key = lambda x:x[4])
+            for x1, y1, x2, y2, cls_conf, cls_pred in detections[i]:
                 
-                #feat_vec =detectron.compute_features_from_bbox(img,[(x1, y1, x2, y2)])
-                #feat_vec = detectron.extract_encoding_features(img)
-                #print(feat_vec)
-                #print(a.get_field('features')[0].shape)
-                print("\t+ Label: %s, Conf: %.5f" % (classes[int(cls_pred)], cls_conf))           
+                
+                if(classes[int(cls_pred)]=="short sleeve top" or classes[int(cls_pred)]=="long sleeve top"):
+                    #print("\t+ Label: %s, Conf: %.5f" % (classes[int(cls_pred)], cls_conf))           
 
                 
-                #color = bbox_colors[np.where(unique_labels == cls_pred)[0]][0]
-                color = colors[int(cls_pred)]
+
+                    color = colors[int(cls_pred)]
                 
-                color = tuple(c*255 for c in color)
-                color = (.7*color[2],.7*color[1],.7*color[0])       
+                    color = tuple(c*255 for c in color)
+                    color = (.7*color[2],.7*color[1],.7*color[0])       
                     
-                font = cv2.FONT_HERSHEY_SIMPLEX   
+                    font = cv2.FONT_HERSHEY_SIMPLEX   
             
             
-                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-                text =  "%s conf: %.3f" % (classes[int(cls_pred)] ,cls_conf)
+                    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                    text =  "%s conf: %.3f" % (classes[int(cls_pred)] ,cls_conf)
                 
-                cv2.rectangle(img,(x1,y1) , (x2,y2) , color,3)
-                y1 = 0 if y1<0 else y1
-                y1_rect = y1-25
-                y1_text = y1-5
+                    cv2.rectangle(images[i],(x1,y1) , (x2,y2) , color,3)
+                    y1 = 0 if y1<0 else y1
+                    y1_rect = y1-25
+                    y1_text = y1-5
 
 
 
-                """if y1_rect<0:
-                    y1_rect = y1+27
-                    y1_text = y1+20
-                cv2.rectangle(img,(x1-2,y1_rect) , (x1 + int(8.5*len(text)),y1) , color,-1)"""
-                #cv2.putText(img,text,(x1,y1_text), font, 0.5,(255,255,255),1,cv2.LINE_AA)
+                    
                 
-                new_img=img[y1:y2,x1:x2]
-                cv2.imwrite('Crops/'+'crop_'+ '.jpg', new_img)         
-              
+                    new_img=images[i][y1:y2,x1:x2]
+                    cv2.imwrite('Crops/Flipkart Images'+'crop_'+str(i)+'.jpg', new_img)         
+                    cv2.imshow('Detections',images[i])
+                    img_id = path.split('/')[-1].split('.')[0]
 
                 
 
                 
-    cv2.imshow('Detections',img)
-    img_id = path.split('/')[-1].split('.')[0]
-    cv2.imwrite('output/output-test_{}_{}_{}.jpg'.format(img_id,model,dataset),img)
-    cv2.waitKey(1)
+     
