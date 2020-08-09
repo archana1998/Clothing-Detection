@@ -20,4 +20,4 @@ All weights and config files are in https://drive.google.com/drive/folders/1jXZZ
 ## Using
 - Clone this repository into your computer
 - Download weights and config files from the google drive link above and place it in the same folder as the cloned repository
-- Use <code>new_image_demo.py</code>  
+- Run <code>new_image_demo.py</code>  to crop bounding boxes of images
