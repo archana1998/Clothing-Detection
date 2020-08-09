@@ -13,6 +13,7 @@ from helpers.ImageLoader import load_images_from_folder
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 torch.cuda.empty_cache()
 
+user_input = input("Please enter the name of the folder of images to crop: ")
 
 #YOLO PARAMS
 yolo_df2_params = {   "model_def" : "/media/archana/Local/Flipkart GRiD/weights/yolov3-df2.cfg",
@@ -28,9 +29,7 @@ yolo_df2_params = {   "model_def" : "/media/archana/Local/Flipkart GRiD/weights/
 #DATASET
 dataset = 'df2'
 
-
-if dataset == 'df2': #deepfashion2
-    yolo_params = yolo_df2_params
+yolo_params = yolo_df2_params
 
 
 
@@ -38,21 +37,13 @@ if dataset == 'df2': #deepfashion2
 #Classes
 classes = load_classes(yolo_params["class_path"])
 
-#Colors
-cmap = plt.get_cmap("rainbow")
-colors = np.array([cmap(i) for i in np.linspace(0, 1, 13)])
+detectron = YOLOv3Predictor(params=yolo_params)
 
 
-model = 'yolo'
-
-if model == 'yolo':
-    detectron = YOLOv3Predictor(params=yolo_params)
-
-
-path = '/media/archana/Local/Flipkart GRiD/Amazon Images'
+path = user_input
 images, filenames = load_images_from_folder(path)
 detections = []
-count = 0
+
 for i in range (len(images)):
     detections.append(detectron.get_detections(images[i]))
     
@@ -66,7 +57,7 @@ for i in range (len(images)):
            
             new_img=images[i][y1:y2,x1-5:x2+20]
             if(new_img.any()):    
-                cv2.imwrite('Crops/Amazon Images/'+'crop_'+filenames[i]+'.jpg', new_img)         
+                cv2.imwrite('Crops/'+'crop_'+filenames[i]+'.jpg', new_img)         
                 img_id = path.split('/')[-1].split('.')[0]
             
 
