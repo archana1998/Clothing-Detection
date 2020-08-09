@@ -16,9 +16,9 @@ torch.cuda.empty_cache()
 user_input = input("Please enter the name of the folder of images to crop: ")
 
 #YOLO PARAMS
-yolo_df2_params = {   "model_def" : "/media/archana/Local/Flipkart GRiD/weights/yolov3-df2.cfg",
-"weights_path" : "/media/archana/Local/Flipkart GRiD/weights/yolov3-df2_15000.weights",
-"class_path":"/media/archana/Local/Flipkart GRiD/weights/df2.names",
+yolo_df2_params = {   "model_def" : "yolov3-df2.cfg",
+"weights_path" : "yolov3-df2_15000.weights",
+"class_path":"df2.names",
 "conf_thres" : 0.5,
 "nms_thres" :0.6,
 "img_size" : 416,
