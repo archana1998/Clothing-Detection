@@ -49,7 +49,7 @@ if model == 'yolo':
     detectron = YOLOv3Predictor(params=yolo_params)
 
 
-path = '/media/archana/Local/Flipkart GRiD/Myntra Images'
+path = '/media/archana/Local/Flipkart GRiD/Amazon Images'
 images, filenames = load_images_from_folder(path)
 detections = []
 count = 0
@@ -66,7 +66,7 @@ for i in range (len(images)):
            
             new_img=images[i][y1:y2,x1-5:x2+20]
             if(new_img.any()):    
-                cv2.imwrite('Crops/Myntra Images/'+'crop_'+filenames[i]+'.jpg', new_img)         
+                cv2.imwrite('Crops/Amazon Images/'+'crop_'+filenames[i]+'.jpg', new_img)         
                 img_id = path.split('/')[-1].split('.')[0]
             
 
