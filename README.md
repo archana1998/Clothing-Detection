@@ -1,4 +1,4 @@
-# Clothing detection using YOLOv3 and DeepFashion2 datasets.
+# Clothing detection using YOLOv3 architecture and DeepFashion2 dataset
 
 ## Datasets
 
